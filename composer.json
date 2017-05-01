@@ -1,15 +1,19 @@
 {
-	"name": "machour/yii2-notifications",
-	"description": "Notifications for your Yii2 app",
+	"name": "aminkt/yii2-notifications",
+	"description": "Notifications for your Yii2 app based on machour/yii2-notifications",
   	"keywords": ["yii", "notification", "growl", "noty", "notify"],
 	"type": "yii2-extension",
 	"support": {
-		"source": "https://github.com/machour/yii2-notifications"
+		"source": "https://gitlab.com/aminkt/yii2-notifications"
 	},
 	"authors": [
 		{
 			"name": "Mehdi Achour",
 			"email": "machour@gmail.com"
+		},
+		{
+			"name": "Amin Keshavarz",
+			"email": "ak_1596@yahoo.com"
 		}
 	],
 	"require": {
@@ -22,8 +26,10 @@
 		}
 	},
 	"extra": {
-		"branch-alias": {
-			"dev-master": "1.0-dev"
-		}
-	}
+        "branch-alias": {
+          "dev-master": "master"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
