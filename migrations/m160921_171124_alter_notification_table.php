@@ -8,11 +8,11 @@ class m160921_171124_alter_notification_table extends Migration
 
     public function up()
     {
-        $this->alterColumn(self::TABLE_NAME, 'key_id', $this->string());
+        $this->alterColumn(self::TABLE_NAME, 'keyId', $this->string());
     }
 
     public function down()
     {
-        $this->alterColumn(self::TABLE_NAME, 'key_id', $this->integer());
+        $this->alterColumn(self::TABLE_NAME, 'keyId', $this->integer());
     }
 }

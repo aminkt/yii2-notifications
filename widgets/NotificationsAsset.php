@@ -15,12 +15,12 @@ class NotificationsAsset extends AssetBundle
     /**
      * @var string The assets source path
      */
-    public $sourcePath = '@vendor/machour/yii2-notifications/assets/';
+    public $sourcePath = '@vendor/aminkt/yii2-notifications/assets/';
 
     /**
      * @var string The assets directory
      */
-    public static $assetsDirectory = '@vendor/machour/yii2-notifications/assets/';
+    public static $assetsDirectory = '@vendor/aminkt/yii2-notifications/assets/';
 
     /**
      * @var array The widget js files

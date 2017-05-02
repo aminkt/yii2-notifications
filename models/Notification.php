@@ -3,19 +3,19 @@
 namespace machour\yii2\notifications\models;
 
 use machour\yii2\notifications\NotificationsModule;
-use Yii;
 use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "notification".
  *
  * @property integer $id
- * @property string $key_id
+ * @property string $keyId
  * @property string $key
  * @property string $type
  * @property boolean $seen
- * @property string $created_at
- * @property integer $user_id
+ * @property string $createTime
+ * @property string $userType
+ * @property integer $userId
  */
 abstract class Notification extends ActiveRecord
 {
@@ -24,6 +24,10 @@ abstract class Notification extends ActiveRecord
      * Default notification
      */
     const TYPE_DEFAULT = 'default';
+    /**
+     * Information notification
+     */
+    const TYPE_INFO   = 'info';
     /**
      * Error notification
      */
@@ -38,10 +42,26 @@ abstract class Notification extends ActiveRecord
     const TYPE_SUCCESS = 'success';
 
     /**
+     * Define admin level user
+     */
+    const USER_TYPE_ADMIN = 'admin';
+
+    /**
+     * Define guest level user
+     */
+    const USER_TYPE_GUEST = 'guest';
+
+    /**
+     * Define user level user
+     */
+    const USER_TYPE_USER = 'user';
+
+    /**
      * @var array List of all enabled notification types
      */
     public static $types = [
         self::TYPE_WARNING,
+        self::TYPE_INFO,
         self::TYPE_DEFAULT,
         self::TYPE_ERROR,
         self::TYPE_SUCCESS,
@@ -82,10 +102,10 @@ abstract class Notification extends ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'user_id', 'key', 'created_at'], 'required'],
-            [['id', 'key_id', 'created_at'], 'safe'],
-            [['user_id'], 'integer'],
-            [['key_id'], 'string'],
+            [['type', 'userId', 'key', 'createTime', 'userType'], 'required'],
+            [['id', 'keyId', 'createTime'], 'safe'],
+            [['userId'], 'integer'],
+            [['keyId', 'userType'], 'string'],
         ];
     }
 
@@ -94,28 +114,29 @@ abstract class Notification extends ActiveRecord
      *
      * @param string $key
      * @param integer $user_id The user id that will get the notification
+     * @param null|string $user_type Type of user
      * @param string $key_id The foreign instance id
      * @param string $type
      * @return bool Returns TRUE on success, FALSE on failure
-     * @throws \Exception
      */
-    public static function notify($key, $user_id, $key_id = null, $type = self::TYPE_DEFAULT)
+    public static function notify($key, $user_id, $user_type = self::USER_TYPE_USER, $key_id = null, $type = self::TYPE_DEFAULT)
     {
         $class = self::className();
-        return NotificationsModule::notify(new $class(), $key, $user_id, $key_id, $type);
+        return NotificationsModule::notify(new $class(), $key, $user_id, $user_type, $key_id, $type);
     }
 
     /**
      * Creates a warning notification
      *
      * @param string $key
+     * @param null|string $user_type Type of user
      * @param integer $user_id The user id that will get the notification
      * @param string $key_id The notification key id
      * @return bool Returns TRUE on success, FALSE on failure
      */
-    public static function warning($key, $user_id, $key_id = null)
+    public static function warning($key, $user_id, $user_type=self::USER_TYPE_USER, $key_id = null)
     {
-        return static::notify($key, $user_id, $key_id, self::TYPE_WARNING);
+        return static::notify($key, $user_id, $user_type, $key_id, self::TYPE_WARNING);
     }
 
 
@@ -123,13 +144,14 @@ abstract class Notification extends ActiveRecord
      * Creates an error notification
      *
      * @param string $key
+     * @param null|string $user_type Type of user
      * @param integer $user_id The user id that will get the notification
      * @param string $key_id The notification key id
      * @return bool Returns TRUE on success, FALSE on failure
      */
-    public static function error($key, $user_id, $key_id = null)
+    public static function error($key, $user_id, $user_type=self::USER_TYPE_USER, $key_id = null)
     {
-        return static::notify($key, $user_id, $key_id, self::TYPE_ERROR);
+        return static::notify($key, $user_id, $user_type, $key_id, self::TYPE_ERROR);
     }
 
 
@@ -137,13 +159,28 @@ abstract class Notification extends ActiveRecord
      * Creates a success notification
      *
      * @param string $key
+     * @param null|string $user_type Type of user
      * @param integer $user_id The user id that will get the notification
      * @param string $key_id The notification key id
      * @return bool Returns TRUE on success, FALSE on failure
      */
-    public static function success($key, $user_id, $key_id = null)
+    public static function success($key, $user_id, $user_type=self::USER_TYPE_USER, $key_id = null)
     {
-        return static::notify($key, $user_id, $key_id, self::TYPE_SUCCESS);
+        return static::notify($key, $user_id, $user_type, $key_id, self::TYPE_SUCCESS);
+    }
+
+    /**
+     * Creates a info notification
+     *
+     * @param string $key
+     * @param null|string $user_type Type of user
+     * @param integer $user_id The user id that will get the notification
+     * @param string $key_id The notification key id
+     * @return bool Returns TRUE on success, FALSE on failure
+     */
+    public static function info($key, $user_id, $user_type=self::USER_TYPE_USER, $key_id = null)
+    {
+        return static::notify($key, $user_id, $user_type, $key_id, self::TYPE_INFO);
     }
 
 }

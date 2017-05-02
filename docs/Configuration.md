@@ -4,7 +4,7 @@ Configuration
 Before using this module, you have to run its migrations scripts:
 
 ```bash
-./yii migrate/up --migrationPath=vendor/machour/yii2-notifications/migrations/
+./yii migrate/up --migrationPath=vendor/aminkt/yii2-notifications/migrations/
 ```
 
 You also need to enable the module in Yii `modules` section of the configuration file:

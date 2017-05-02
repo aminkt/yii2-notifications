@@ -2,7 +2,8 @@
 
 namespace machour\yii2\notifications\controllers;
 
-use machour\yii2\notifications\models\Notification;
+use common\models\Notification;
+use machour\yii2\notifications\NotificationsModule;
 use Yii;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -14,7 +15,12 @@ class NotificationsController extends Controller
     /**
      * @var integer The current user id
      */
-    private $user_id;
+    private $userId;
+
+    /**
+     * @var string The current user type
+     */
+    private $userType;
 
     /**
      * @var string The notification class
@@ -28,7 +34,8 @@ class NotificationsController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $this->user_id = $this->module->userId;
+        $this->userId = $this->module->userId;
+        $this->userType = $this->module->userType;
         $this->notificationClass = $this->module->notificationClass;
         parent::init();
     }
@@ -44,13 +51,21 @@ class NotificationsController extends Controller
         /** @var Notification $class */
         $class = $this->notificationClass;
         $models = $class::find()->where([
-            'user_id' => $this->user_id,
+            'userId' => $this->userId,
+            'userType'=> $this->userType,
+            'seen' => $seen
+        ])->orWhere([
+            'userId' => 0,
+            'seen' => $seen
+        ])->orWhere([
+            'userId' => -1,
             'seen' => $seen
         ])->all();
 
         $results = [];
 
         foreach ($models as $model) {
+            $formatter = Yii::$app->getFormatter();
             /** @var Notification $model */
             $results[] = [
                 'id' => $model->id,
@@ -59,7 +74,7 @@ class NotificationsController extends Controller
                 'description' => $model->getDescription(),
                 'url' => Url::to(['notifications/rnr', 'id' => $model->id]),
                 'key' => $model->key,
-                'date' => $model->created_at
+                'date' => $formatter->asRelativeTime($model->createTime)
             ];
         }
         return $results;
@@ -112,6 +127,12 @@ class NotificationsController extends Controller
     }
 
 
+    public function actionTest(){
+        $n = NotificationsModule::getInstance();
+        echo $n->userType;
+//        Notification::error(Notification::KEY_NEW_BOT_REG, 2, Notification::USER_TYPE_ADMIN, 2);
+    }
+
     /**
      * Gets a notification by id
      *
@@ -129,9 +150,10 @@ class NotificationsController extends Controller
             throw new HttpException(404, "Unknown notification");
         }
 
-        if ($notification->user_id != $this->user_id) {
-            throw new HttpException(500, "Not your notification");
-        }
+        if($notification->userId != -1)
+            if (($notification->userId != $this->userId and  $notification->userId!=0) or $notification->userType != $this->userType) {
+                throw new HttpException(500, "Not your notification");
+            }
 
         return $notification;
     }

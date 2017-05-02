@@ -175,7 +175,7 @@ var Notifications = (function(options) {
                 '<div class="col-xs-10">' +
                     '<div class="title">{title}</div>' +
                     '<div class="description">{description}</div>' +
-                    '<div class="timeago">{timeago}</div>' +
+                    '<div class="timeago">{time}</div>' +
                 '</div>' +
                 '<div class="col-xs-2">' +
                     '<div class="actions pull-right">{seen}{delete}</div>' +
@@ -183,7 +183,7 @@ var Notifications = (function(options) {
             '</div>',
         listItemBeforeRender: function (elem) {
             return elem;
-        }
+        },
     }, options);
 
     /**
@@ -202,25 +202,19 @@ var Notifications = (function(options) {
         var keywords = ['id', 'title', 'description', 'url', 'type'];
         var ret, html = self.opts.listItemTemplate;
 
-        html = '<div class="notification notification-{type} ' +
-            (object.seen ? 'notification-seen' : 'notification-unseen') +
-            '" data-route="{url}" data-id="{id}">' +
-                html +
-                '</div>';
-
         for (var i = 0; i < keywords.length; i++) {
             html = html.replace(new RegExp('{' + keywords[i] + '}', 'g'), object[keywords[i]]);
         }
 
+        html = html.replace(/\{seenClass}/g, object.seen?'notification-seen':'notification-unseen');
         html = html.replace(/\{seen}/g, '<span class="notification-seen fa fa-check"></span>');
         html = html.replace(/\{delete}/g, '<span class="notification-delete fa fa-close"></span>');
-        html = html.replace(/\{timeago}/g, '<span class="notification-timeago"></span>');
+        html = html.replace(/\{time}/g, object['date']);
         ret = $(html);
         ret.find('.notification-seen').click(function() {
             self.markSeen($(this).parents('.notification').data('id'));
             return false;
         });
-        ret.find('.notification-timeago').text($.timeago(object['date']));
         ret.find('.notification-delete').click(function() {
             self.delete($(this).parents('.notification').data('id'));
             return false;
