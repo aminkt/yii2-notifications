@@ -24,12 +24,5 @@
 		"psr-4": {
 			"machour\\yii2\\notifications\\": ""
 		}
-	},
-	"extra": {
-        "branch-alias": {
-          "dev-master": "master"
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+	}
 }
